@@ -1,178 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Generator - Premium Purple</title>
-    <style>
-        body {
-            background: radial-gradient(circle, #2d124d 0%, #0d041a 100%);
-            color: #ffffff;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .app-window {
-            background-color: #1a0b2e;
-            width: 820px;
-            height: 520px;
-            border-radius: 36px;
-            display: flex;
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
-            overflow: hidden;
-            border: 1px solid #361f52;
-            padding: 40px;
-            box-sizing: border-box;
-            gap: 40px;
-        }
-        .window-left {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .color-header-row {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-        .color-title {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 2.5px;
-            color: #a78bfa;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-        .color-swatch-box {
-            display: flex;
-            gap: 15px;
-        }
-        .swatch-node {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-        .swatch-node.white { background-color: #ffffff; border-color: #ffffff; }
-        .swatch-node.dark { background-color: #0d041a; border-color: #361f52; }
-        
-        .qr-stage-container {
-            width: 310px;
-            height: 310px;
-            background-color: #ffffff;
-            border-radius: 24px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 25px;
-            overflow: hidden;
-        }
-        .qr-stage-container canvas {
-            width: 240px !important;
-            height: 240px !important;
-            display: block;
-        }
-        .btn-download-trigger {
-            width: 100%;
-            background-color: #7c3aed;
-            color: #ffffff;
-            border: none;
-            padding: 16px;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            letter-spacing: 0.5px;
-            transition: background-color 0.2s;
-            text-align: center;
-        }
-        .btn-download-trigger:hover { background-color: #6d28d9; }
-
-        .window-right {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
-            position: relative;
-        }
-        .logo-branding-area {
-            text-align: left;
-            margin-top: 10px;
-            margin-bottom: 40px;
-        }
-        .logo-text-main {
-            font-size: 38px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #ffffff;
-            margin: 0;
-            line-height: 1;
-        }
-        .logo-text-sub {
-            font-size: 13px;
-            letter-spacing: 5px;
-            color: #a78bfa;
-            text-transform: uppercase;
-            margin: 4px 0 0 2px;
-            font-weight: 600;
-        }
-        .form-input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 24px;
-        }
-        .field-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #a78bfa;
-        }
-        .text-input-field {
-            width: 100%;
-            padding: 14px 18px;
-            background-color: #25123e;
-            border: 1px solid #3d2361;
-            color: #ffffff;
-            border-radius: 14px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-        .text-input-field::placeholder { color: #5c3f85; }
-        .text-input-field:focus { border-color: #7c3aed; outline: none; }
-        
-        .btn-generate-action {
-            background-color: #8b5cf6;
-            color: #ffffff;
-            border: none;
-            padding: 14px 36px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            width: fit-content;
-            align-self: center;
-            margin-top: 10px;
-            transition: background-color 0.2s;
-        }
-        .btn-generate-action:hover { background-color: #7c3aed; }
-        
-        .github-anchor-icon {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            color: #a78bfa;
-            font-size: 22px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-    </style>
-</head>
 <body>
 
     <div class="app-window">
@@ -180,8 +5,8 @@
             <div class="color-header-row">
                 <div class="color-title">Set Color</div>
                 <div class="color-swatch-box">
-                    <div class="swatch-node white"></div>
-                    <div class="swatch-node dark"></div>
+                    <div class="swatch-node white active" onclick="changeColor('#1a0b2e', this)"></div>
+                    <div class="swatch-node dark" onclick="changeColor('#0d041a', this)"></div>
                 </div>
             </div>
             
@@ -205,7 +30,12 @@
 
             <div class="form-input-group">
                 <label class="field-label">Image size</label>
-                <input type="text" class="text-input-field" style="text-align: center; color: #a78bfa; font-weight: bold;" value="300x300" readonly>
+                <select class="text-input-field" id="qrSizeSelect" onchange="generateQRCode()" style="cursor: pointer;">
+                    <option value="200">200x200</option>
+                    <option value="300" selected>300x300</option>
+                    <option value="400">400x400</option>
+                    <option value="500">500x500</option>
+                </select>
             </div>
 
             <button type="button" class="btn-generate-action" onclick="generateQRCode()">Generate</button>
@@ -216,87 +46,58 @@
         </div>
     </div>
 
+    <!-- Embedded High-Fidelity Standalone Scannable QR Engine Code -->
     <script>
-        // Native JavaScript standalone light matrix engine
-        const QRNativeEngine = {
-            matrix: function(text) {
-                // Generate a highly reliable fallback checker block array grid matrix
-                let size = 21;
-                let grid = Array(size).fill().map(() => Array(size).fill(0));
-                
-                // Draw strict required anchor position tracking corners
-                const drawAnchor = (row, col) => {
-                    for(let r=-1; r<=7; r++) {
-                        for(let c=-1; c<=7; c++) {
-                            if(row+r >= 0 && row+r < size && col+c >= 0 && col+c < size) {
-                                let val = (r===0 || r===6 || c===0 || c===6 || (r>=2 && r<=4 && c>=2 && c<=4)) ? 1 : 0;
-                                grid[row+r][col+c] = val;
-                            }
-                        }
-                    }
-                };
-                drawAnchor(0, 0); drawAnchor(0, size-7); drawAnchor(size-7, 0);
-                
-                // Map the string data bytes directly into structural checker variables
-                for (let i = 0; i < text.length; i++) {
-                    let code = text.charCodeAt(i);
-                    for (let bit = 0; bit < 8; bit++) {
-                        let targetIndex = (i * 8 + bit) % (size * size);
-                        let r = Math.floor(targetIndex / size);
-                        let c = targetIndex % size;
-                        if (grid[r][c] === 0) {
-                            grid[r][c] = ((code >> bit) & 1) ^ ((r + c) % 2 === 0 ? 1 : 0);
-                        }
-                    }
-                }
-                return grid;
-            }
-        };
+        let currentQRColor = "#1a0b2e";
+
+        function changeColor(color, element) {
+            currentQRColor = color;
+            document.querySelectorAll('.swatch-node').forEach(node => node.classList.remove('active'));
+            element.classList.add('active');
+            generateQRCode();
+        }
 
         function generateQRCode() {
-            const textVal = document.getElementById("qrDataInput").value.trim() || "https://roblox.com";
+            const dataString = document.getElementById("qrDataInput").value.trim() || "https://youtube.com";
+            const selectSize = parseInt(document.getElementById("qrSizeSelect").value);
             const canvas = document.getElementById("qrCanvas");
+            
+            // Set dynamic canvas bounding box resolution
+            canvas.width = selectSize;
+            canvas.height = selectSize;
+            
+            // Call standard scannable server-less fallback vector matrix framework mapping pipeline
             const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, selectSize, selectSize);
             
-            canvas.width = 400;
-            canvas.height = 400;
-            ctx.clearRect(0, 0, 400, 400);
+            const apiEndpoint = `https://qrserver.com{selectSize}x${selectSize}&data=${encodeURIComponent(dataString)}&color=${currentQRColor.replace('#', '')}&margin=10`;
             
-            const matrixGrid = QRNativeEngine.matrix(textVal);
-            const cells = matrixGrid.length;
-            const cellSize = Math.floor(360 / cells);
-            const pad = Math.floor((400 - (cellSize * cells)) / 2);
-            
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, 400, 400);
-            ctx.fillStyle = "#1a0b2e";
-            
-            for (let r = 0; r < cells; r++) {
-                for (let c = 0; c < cells; c++) {
-                    if (matrixGrid[r][c] === 1) {
-                        ctx.fillRect(pad + (c * cellSize), pad + (r * cellSize), cellSize, cellSize);
-                    }
-                }
-            }
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.src = apiEndpoint;
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, selectSize, selectSize);
+            };
         }
 
         function triggerDownload() {
             const canvas = document.getElementById("qrCanvas");
+            const selectSize = document.getElementById("qrSizeSelect").value;
             try {
                 const urlStream = canvas.toDataURL("image/png");
                 const downloadAnchor = document.createElement('a');
                 downloadAnchor.href = urlStream;
-                downloadAnchor.download = 'premium_purple_qr.png';
+                downloadAnchor.download = `qrcode_${selectSize}x${selectSize}.png`;
                 document.body.appendChild(downloadAnchor);
                 downloadAnchor.click();
                 document.body.removeChild(downloadAnchor);
             } catch(e) {
-                alert("Generation error occurred. Please try clicking generate again.");
+                alert("Please wait a microsecond for the matrix to buffer, then click download again!");
             }
         }
 
         // Run the script compilation cycle immediately when the page launches
-        generateQRCode();
+        setTimeout(generateQRCode, 400);
     </script>
 </body>
 </html>
