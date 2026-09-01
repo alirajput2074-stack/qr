@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator - Premium Purple</title>
+    <!-- Built-in high speed canvas calculation script compiler wrapper -->
+    <script src="https://cloudflare.com"></script>
     <style>
         body {
             background: radial-gradient(circle, #2d124d 0%, #0d041a 100%);
@@ -72,13 +74,13 @@
             align-items: center;
             margin-bottom: 25px;
             overflow: hidden;
-            padding: 20px;
+            padding: 30px;
             box-sizing: border-box;
         }
-        .qr-stage-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+        /* Lock calculation tree directly into canvas layer layout rules */
+        .qr-stage-container img, .qr-stage-container canvas {
+            width: 250px !important;
+            height: 250px !important;
             display: block;
         }
         .btn-download-trigger {
@@ -188,9 +190,8 @@
                 </div>
             </div>
             
-            <div class="qr-stage-container">
-                <img id="qrImageOutput" alt="QR Code Output Framework">
-            </div>
+            <!-- Target sandbox injection node slot -->
+            <div class="qr-stage-container" id="qrcode_canvas"></div>
             
             <button type="button" class="btn-download-trigger" onclick="triggerDownload()">Download</button>
         </div>
@@ -203,12 +204,12 @@
 
             <div class="form-input-group">
                 <label class="field-label">Submit URL or text</label>
-                <input type="text" class="text-input-field" id="qrDataInput" placeholder="Enter text or URL here" value="https://roblox.com">
+                <input type="text" class="text-input-field" id="qrDataInput" placeholder="Enter text or URL here" value="https://youtube.com">
             </div>
 
             <div class="form-input-group">
                 <label class="field-label">Image size</label>
-                <input type="text" class="text-input-field" style="text-align: center; color: #5c3f85;" value="300x300" readonly>
+                <input type="text" class="text-input-field" style="text-align: center; color: #a78bfa; font-weight: bold;" value="300x300" readonly>
             </div>
 
             <button type="button" class="btn-generate-action" onclick="generateQRCode()">Generate</button>
@@ -220,30 +221,53 @@
     </div>
 
     <script>
+        let stageBox = document.getElementById("qrcode_canvas");
+        let activeInstance = null;
+
         function generateQRCode() {
-            const dataString = document.getElementById("qrDataInput").value.trim() || "https://roblox.com";
+            let userString = document.getElementById("qrDataInput").value.trim();
+            if(!userString) return;
+
+            // Purge old DOM branch node mappings completely
+            stageBox.innerHTML = "";
             
-            // Build the static configuration layout grid natively using google open charts pipeline
-            const apiEndpoint = `https://qrserver.com{encodeURIComponent(dataString)}&color=1a0b2e`;
-            
-            document.getElementById("qrImageOutput").src = apiEndpoint;
+            // Re-render local vector mapping structure instantly
+            activeInstance = new QRCode(stageBox, {
+                text: userString,
+                width: 250,
+                height: 250,
+                colorDark : "#1a0b2e",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
         }
 
         function triggerDownload() {
-            const targetSrc = document.getElementById("qrImageOutput").src;
-            if (targetSrc) {
-                const downloadLink = document.createElement('a');
-                downloadLink.href = targetSrc;
-                downloadLink.download = 'premium_purple_qr.png';
-                downloadLink.target = '_blank';
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
+            // Pull safe base64 stream directly from target layout element tree 
+            const finalImg = stageBox.querySelector('img');
+            const targetCanvas = stageBox.querySelector('canvas');
+            
+            let sourceUrl = "";
+            if (finalImg && finalImg.src && finalImg.src.startsWith('data:')) {
+                sourceUrl = finalImg.src;
+            } else if (targetCanvas) {
+                sourceUrl = targetCanvas.toDataURL("image/png");
+            }
+
+            if (sourceUrl) {
+                const triggerLink = document.createElement('a');
+                triggerLink.href = sourceUrl;
+                triggerLink.download = 'premium_purple_qr.png';
+                document.body.appendChild(triggerLink);
+                triggerLink.click();
+                document.body.removeChild(triggerLink);
+            } else {
+                alert("Please input text and generate a code first!");
             }
         }
 
-        // Initialize script environment configurations state
-        generateQRCode();
+        // Automatic generation loop run when document finishes compilation
+        setTimeout(generateQRCode, 300);
     </script>
 </body>
 </html>
