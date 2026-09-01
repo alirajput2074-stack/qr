@@ -146,7 +146,7 @@
             border-radius: 20px !important;
             font-size: 14px !important;
             font-weight: 700 !important;
-            cursor: pointer !important;
+            cursor: pointer;
             width: fit-content !important;
             align-self: center !important;
         }
@@ -166,8 +166,8 @@
             <div class="color-header-row">
                 <div class="color-title">Set Color</div>
                 <div class="color-swatch-box">
-                    <div class="swatch-node white active" onclick="changeColor('#1a0b2e', this)"></div>
-                    <div class="swatch-node dark" onclick="changeColor('#0d041a', this)"></div>
+                    <div class="swatch-node white active" onclick="changeColor('1a0b2e', this)"></div>
+                    <div class="swatch-node dark" onclick="changeColor('0d041a', this)"></div>
                 </div>
             </div>
             
@@ -210,8 +210,8 @@
     <script>
         let currentQRColor = "1a0b2e";
 
-        function changeColor(color, element) {
-            currentQRColor = color.replace('#', '');
+        function changeColor(colorHex, element) {
+            currentQRColor = colorHex;
             document.querySelectorAll('.swatch-node').forEach(node => node.classList.remove('active'));
             element.classList.add('active');
             generateQRCode();
@@ -224,18 +224,18 @@
             
             canvas.width = selectSize;
             canvas.height = selectSize;
-            
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, selectSize, selectSize);
             
-            const apiEndpoint = `https://qrserver.com{selectSize}x${selectSize}&data=${encodeURIComponent(dataString)}&color=${currentQRColor}&margin=10`;
+            // Fixed secure dynamic gateway layout string matrix 
+            const secureApiUrl = "https://qrserver.com" + selectSize + "x" + selectSize + "&data=" + encodeURIComponent(dataString) + "&color=" + currentQRColor + "&margin=15";
             
             const img = new Image();
             img.crossOrigin = "anonymous";
-            img.src = apiEndpoint;
             img.onload = function() {
                 ctx.drawImage(img, 0, 0, selectSize, selectSize);
             };
+            img.src = secureApiUrl;
         }
 
         function triggerDownload() {
@@ -245,15 +245,16 @@
                 const urlStream = canvas.toDataURL("image/png");
                 const downloadAnchor = document.createElement('a');
                 downloadAnchor.href = urlStream;
-                downloadAnchor.download = `qrcode_${selectSize}x${selectSize}.png`;
+                downloadAnchor.download = "qrcode_" + selectSize + "x" + selectSize + ".png";
                 document.body.appendChild(downloadAnchor);
                 downloadAnchor.click();
                 document.body.removeChild(downloadAnchor);
             } catch(e) {
-                alert("Please click generate first, then try downloading!");
+                alert("Please type a new link first and click generate!");
             }
         }
 
+        // Initialize script environment configurations state
         setTimeout(generateQRCode, 400);
     </script>
 </body>
