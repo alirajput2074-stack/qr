@@ -1,17 +1,11 @@
-import io
-import base64
-import qrcode
-from flask import Flask, render_template_string, request
-
-app = Flask(__name__)
-
-HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator - Premium Purple</title>
+    <!-- Live QR matrix library vector module compilation hook -->
+    <script src="https://cloudflare.com"></script>
     <style>
         body {
             background: radial-gradient(circle, #2d124d 0%, #0d041a 100%);
@@ -36,7 +30,6 @@ HTML_TEMPLATE = """
             box-sizing: border-box;
             gap: 40px;
         }
-        /* Left Block Area: Color selection grid and display matrix */
         .window-left {
             flex: 1;
             display: flex;
@@ -80,11 +73,13 @@ HTML_TEMPLATE = """
             justify-content: center;
             align-items: center;
             margin-bottom: 25px;
+            overflow: hidden;
         }
-        .qr-stage-container img {
-            width: 250px;
-            height: 250px;
+        /* Keep alignment vectors anchored centrally in canvas */
+        .qr-stage-container img, .qr-stage-container canvas {
             display: block;
+            max-width: 250px;
+            max-height: 250px;
         }
         .btn-download-trigger {
             width: 100%;
@@ -102,7 +97,6 @@ HTML_TEMPLATE = """
         }
         .btn-download-trigger:hover { background-color: #6d28d9; }
 
-        /* Right Customization Container Block Fields */
         .window-right {
             flex: 1;
             display: flex;
@@ -180,13 +174,11 @@ HTML_TEMPLATE = """
             cursor: pointer;
             text-decoration: none;
         }
-        .github-anchor-icon:hover { color: #ffffff; }
     </style>
 </head>
 <body>
 
     <div class="app-window">
-        <!-- Render Outputs Left Viewport Section -->
         <div class="window-left">
             <div class="color-header-row">
                 <div class="color-title">Set Color</div>
@@ -196,19 +188,13 @@ HTML_TEMPLATE = """
                 </div>
             </div>
             
-            <div class="qr-stage-container">
-                {% if qr_img %}
-                <img src="data:image/png;base64,{{ qr_img }}" alt="Custom Grid Pipeline">
-                {% else %}
-                <div style="color: #5c3f85; font-weight: 600; font-size: 14px;">QR Matrix Grid</div>
-                {% endif %}
-            </div>
+            <!-- Live client rendered workspace grid -->
+            <div class="qr-stage-container" id="qrcode"></div>
             
             <button type="button" class="btn-download-trigger" onclick="triggerDownload()">Download</button>
         </div>
 
-        <!-- System Input Customization Right Config Panel Form -->
-        <form class="window-right" method="POST" id="qrForm">
+        <div class="window-right">
             <div class="logo-branding-area">
                 <div class="logo-text-main">QRcode</div>
                 <div class="logo-text-sub">generator</div>
@@ -216,7 +202,7 @@ HTML_TEMPLATE = """
 
             <div class="form-input-group">
                 <label class="field-label">Submit URL or text</label>
-                <input type="text" class="text-input-field" name="qr_data" placeholder="Enter text or URL here" value="{{ text_data }}" required>
+                <input type="text" class="text-input-field" id="qrDataInput" placeholder="Enter text or URL here" value="https://roblox.com">
             </div>
 
             <div class="form-input-group">
@@ -224,48 +210,51 @@ HTML_TEMPLATE = """
                 <input type="text" class="text-input-field" style="text-align: center; color: #5c3f85;" value="300x300" readonly>
             </div>
 
-            <button type="submit" class="btn-generate-action">Generate</button>
+            <button type="button" class="btn-generate-action" onclick="generateQRCode()">Generate</button>
 
-            
-            <a href="https://github.com/alirajput2074-stack" target="_blank" class="github-anchor-icon">
+            <a href="https://github.com" target="_blank" class="github-anchor-icon">
                 <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://w3.org"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
             </a>
-        </form>
+        </div>
     </div>
 
     <script>
+        let qrContainer = document.getElementById("qrcode");
+        let qrcodeInstance = null;
+
+        // Functional live initialization pipeline
+        function generateQRCode() {
+            let dataString = document.getElementById("qrDataInput").value.trim();
+            if(!dataString) return;
+
+            // Clear old container blocks before instantiation
+            qrContainer.innerHTML = "";
+            
+            qrcodeInstance = new QRCode(qrContainer, {
+                text: dataString,
+                width: 250,
+                height: 250,
+                colorDark : "#1a0b2e",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+
         function triggerDownload() {
-            const qrImg = document.querySelector('.qr-stage-container img');
-            if (qrImg) {
-                const link = document.createElement('a');
-                link.href = qrImg.src;
-                link.download = 'qrcode_purple.png';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+            // Fetch internal image matrix from canvas tree element pipeline
+            const targetImg = qrContainer.querySelector('img');
+            if (targetImg && targetImg.src) {
+                const downloadLink = document.createElement('a');
+                downloadLink.href = targetImg.src;
+                downloadLink.download = 'premium_purple_qr.png';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
             }
         }
+
+        // Automatic generation loop run when document loads initial conditions
+        generateQRCode();
     </script>
 </body>
 </html>
-"""
-
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    text_data = "https://roblox.com"  
-    qr_img_base64 = ""
-    if request.method == 'POST':
-        text_data = request.form.get('qr_data', '').strip()
-    if text_data:
-        qr = qrcode.QRCode(version=1, box_size=10, border=1)
-        qr.add_data(text_data)
-        qr.make(fit=True)
-        img_qr = qr.make_image(fill_color="#1a0b2e", back_color="white")
-        qr_buffer = io.BytesIO()
-        img_qr.save(qr_buffer, format="PNG")
-        qr_img_base64 = base64.b64encode(qr_buffer.getvalue()).decode('utf-8')
-    return render_template_string(HTML_TEMPLATE, qr_img=qr_img_base64, text_data=text_data)
-
-# Run context definition framework hook for Vercel functions mapping node execution
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5003, debug=True)
