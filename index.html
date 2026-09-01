@@ -1,3 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator - Premium Purple</title>
+    <style>
+        body {
+            background: radial-gradient(circle, #2d124d 0%, #0d041a 100%) !important;
+            color: #ffffff !important;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+            margin: 0 !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            min-height: 100vh !important;
+        }
+        .app-window {
+            background-color: #1a0b2e !important;
+            width: 820px !important;
+            height: 520px !important;
+            border-radius: 36px !important;
+            display: flex !important;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6) !important;
+            overflow: hidden !important;
+            border: 1px solid #361f52 !important;
+            padding: 40px !important;
+            box-sizing: border-box !important;
+            gap: 40px !important;
+        }
+        .window-left {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+        }
+        .color-header-row {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            margin-bottom: 25px !important;
+        }
+        .color-title {
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            letter-spacing: 2.5px !important;
+            color: #a78bfa !important;
+            text-transform: uppercase !important;
+            margin-bottom: 10px !important;
+        }
+        .color-swatch-box {
+            display: flex !important;
+            gap: 15px !important;
+        }
+        .swatch-node {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            border: 2px solid transparent !important;
+        }
+        .swatch-node.white { background-color: #ffffff !important; border-color: #7c3aed !important; }
+        .swatch-node.dark { background-color: #0d041a !important; border-color: #361f52 !important; }
+        .swatch-node.active { border-color: #00ffcc !important; box-shadow: 0 0 10px #00ffcc !important; }
+        
+        .qr-stage-container {
+            width: 310px !important;
+            height: 310px !important;
+            background-color: #ffffff !important;
+            border-radius: 24px !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            margin-bottom: 25px !important;
+            overflow: hidden !important;
+        }
+        .qr-stage-container canvas {
+            width: 250px !important;
+            height: 250px !important;
+            display: block !important;
+        }
+        .btn-download-trigger {
+            width: 100% !important;
+            background-color: #7c3aed !important;
+            color: #ffffff !important;
+            border: none !important;
+            padding: 16px !important;
+            border-radius: 16px !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            letter-spacing: 0.5px !important;
+            text-align: center !important;
+        }
+        .window-right {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            box-sizing: border-box !important;
+            position: relative !important;
+        }
+        .logo-branding-area {
+            text-align: left !important;
+            margin-top: 10px !important;
+            margin-bottom: 40px !important;
+        }
+        .logo-text-main {
+            font-size: 38px !important;
+            font-weight: 700 !important;
+            color: #ffffff !important;
+            margin: 0 !important;
+        }
+        .logo-text-sub {
+            font-size: 13px !important;
+            letter-spacing: 5px !important;
+            color: #a78bfa !important;
+            text-transform: uppercase !important;
+            margin-top: 4px !important;
+        }
+        .form-input-group {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+            margin-bottom: 24px !important;
+        }
+        .field-label {
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            color: #a78bfa !important;
+        }
+        .text-input-field {
+            width: 100% !important;
+            padding: 14px 18px !important;
+            background-color: #25123e !important;
+            border: 1px solid #3d2361 !important;
+            color: #ffffff !important;
+            border-radius: 14px !important;
+            font-size: 14px !important;
+            box-sizing: border-box !important;
+        }
+        .btn-generate-action {
+            background-color: #8b5cf6 !important;
+            color: #ffffff !important;
+            border: none !important;
+            padding: 14px 36px !important;
+            border-radius: 20px !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            width: fit-content !important;
+            align-self: center !important;
+        }
+        .github-anchor-icon {
+            position: absolute !important;
+            bottom: 5px !important;
+            right: 5px !important;
+            color: #a78bfa !important;
+            font-size: 22px !important;
+        }
+    </style>
+</head>
 <body>
 
     <div class="app-window">
@@ -46,12 +207,11 @@
         </div>
     </div>
 
-    <!-- Embedded High-Fidelity Standalone Scannable QR Engine Code -->
     <script>
-        let currentQRColor = "#1a0b2e";
+        let currentQRColor = "1a0b2e";
 
         function changeColor(color, element) {
-            currentQRColor = color;
+            currentQRColor = color.replace('#', '');
             document.querySelectorAll('.swatch-node').forEach(node => node.classList.remove('active'));
             element.classList.add('active');
             generateQRCode();
@@ -62,15 +222,13 @@
             const selectSize = parseInt(document.getElementById("qrSizeSelect").value);
             const canvas = document.getElementById("qrCanvas");
             
-            // Set dynamic canvas bounding box resolution
             canvas.width = selectSize;
             canvas.height = selectSize;
             
-            // Call standard scannable server-less fallback vector matrix framework mapping pipeline
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, selectSize, selectSize);
             
-            const apiEndpoint = `https://qrserver.com{selectSize}x${selectSize}&data=${encodeURIComponent(dataString)}&color=${currentQRColor.replace('#', '')}&margin=10`;
+            const apiEndpoint = `https://qrserver.com{selectSize}x${selectSize}&data=${encodeURIComponent(dataString)}&color=${currentQRColor}&margin=10`;
             
             const img = new Image();
             img.crossOrigin = "anonymous";
@@ -92,11 +250,10 @@
                 downloadAnchor.click();
                 document.body.removeChild(downloadAnchor);
             } catch(e) {
-                alert("Please wait a microsecond for the matrix to buffer, then click download again!");
+                alert("Please click generate first, then try downloading!");
             }
         }
 
-        // Run the script compilation cycle immediately when the page launches
         setTimeout(generateQRCode, 400);
     </script>
 </body>
