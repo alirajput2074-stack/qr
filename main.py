@@ -11,98 +11,238 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Generator - Dark Edition</title>
+    <title>QR Code Generator - Premium Purple</title>
     <style>
-        body { background-color: #0b0c10; color: #e1e1e6; font-family: sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .app-window { background-color: #121214; width: 1000px; height: 620px; border-radius: 20px; display: flex; box-shadow: 0 25px 60px rgba(0,0,0,0.4); overflow: hidden; border: 1px solid #1f1f23; }
-        .window-left { flex: 1.1; background-color: #121214; display: flex; justify-content: center; align-items: center; padding: 40px; }
-        .qr-stage-container { width: 340px; height: 340px; background-color: #1c1c1f; border: 1px solid #29292e; border-radius: 16px; display: flex; justify-content: center; align-items: center; }
-        .qr-stage-container img { width: 240px; height: 240px; display: block; border-radius: 8px; }
-        .window-right { flex: 1.3; background-color: #16161a; border-left: 1px solid #1f1f23; padding: 40px; display: flex; flex-direction: column; box-sizing: border-box; }
-        .drawer-box { border: 1px solid #29292e; border-radius: 12px; margin-bottom: 14px; overflow: hidden; background-color: #121214; }
-        .drawer-header { padding: 18px 24px; font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .drawer-header.active-blue { background-color: #00a8ff; color: #ffffff; }
-        .drawer-header.plain-dark { background-color: #121214; color: #c5c5d2; }
-        .drawer-body { padding: 24px; display: block; background-color: #121214; border-top: 1px solid #1f1f23; }
-        .drawer-body.collapsed { display: none !important; }
-        .input-text-area { width: 100%; padding: 16px 20px; background-color: #1c1c1f; border: 1px solid #29292e; color: #ffffff; border-radius: 12px; font-size: 15px; box-sizing: border-box; margin-bottom: 20px; }
-        .matrix-options-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        .frame-card-node { border: 1px solid #29292e; border-radius: 10px; padding: 12px; text-align: center; font-size: 11px; font-weight: 600; color: #a0a0b0; cursor: pointer; background-color: #1c1c1f; }
-        .frame-card-node.selected { border-color: #00a8ff; background-color: #00a8ff20; color: #00a8ff; }
-        .action-container-row { display: flex; gap: 16px; margin-top: auto; width: 100%; }
-        .btn-action-trigger { flex: 1; border: none; padding: 16px; border-radius: 50px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-action-trigger.solid-green { background-color: #05d3a3; color: #ffffff; }
-        .btn-action-trigger.outline-cyan { background-color: transparent; border: 2px solid #00d2c4; color: #00d2c4; }
+        body {
+            background: radial-gradient(circle, #2d124d 0%, #0d041a 100%);
+            color: #ffffff;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .app-window {
+            background-color: #1a0b2e;
+            width: 820px;
+            height: 520px;
+            border-radius: 36px;
+            display: flex;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            border: 1px solid #361f52;
+            padding: 40px;
+            box-sizing: border-box;
+            gap: 40px;
+        }
+        /* Left Block Area: Color selection grid and display matrix */
+        .window-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .color-header-row {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .color-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            color: #a78bfa;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .color-swatch-box {
+            display: flex;
+            gap: 15px;
+        }
+        .swatch-node {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .swatch-node.white { background-color: #ffffff; border-color: #ffffff; }
+        .swatch-node.dark { background-color: #0d041a; border-color: #361f52; }
+        
+        .qr-stage-container {
+            width: 310px;
+            height: 310px;
+            background-color: #ffffff;
+            border-radius: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .qr-stage-container img {
+            width: 250px;
+            height: 250px;
+            display: block;
+        }
+        .btn-download-trigger {
+            width: 100%;
+            background-color: #7c3aed;
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: background-color 0.2s;
+            text-align: center;
+        }
+        .btn-download-trigger:hover { background-color: #6d28d9; }
+
+        /* Right Customization Container Block Fields */
+        .window-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .logo-branding-area {
+            text-align: left;
+            margin-top: 10px;
+            margin-bottom: 40px;
+        }
+        .logo-text-main {
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #ffffff;
+            margin: 0;
+            line-height: 1;
+        }
+        .logo-text-sub {
+            font-size: 13px;
+            letter-spacing: 5px;
+            color: #a78bfa;
+            text-transform: uppercase;
+            margin: 4px 0 0 2px;
+            font-weight: 600;
+        }
+        .form-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 24px;
+        }
+        .field-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #a78bfa;
+        }
+        .text-input-field {
+            width: 100%;
+            padding: 14px 18px;
+            background-color: #25123e;
+            border: 1px solid #3d2361;
+            color: #ffffff;
+            border-radius: 14px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .text-input-field::placeholder { color: #5c3f85; }
+        .text-input-field:focus { border-color: #7c3aed; outline: none; }
+        
+        .btn-generate-action {
+            background-color: #8b5cf6;
+            color: #ffffff;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            width: fit-content;
+            align-self: center;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+        .btn-generate-action:hover { background-color: #7c3aed; }
+        
+        .github-anchor-icon {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            color: #a78bfa;
+            font-size: 22px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .github-anchor-icon:hover { color: #ffffff; }
     </style>
 </head>
 <body>
+
     <div class="app-window">
+        <!-- Render Outputs Left Viewport Section -->
         <div class="window-left">
+            <div class="color-header-row">
+                <div class="color-title">Set Color</div>
+                <div class="color-swatch-box">
+                    <div class="swatch-node white"></div>
+                    <div class="swatch-node dark"></div>
+                </div>
+            </div>
+            
             <div class="qr-stage-container">
                 {% if qr_img %}
-                <img src="data:image/png;base64,{{ qr_img }}" alt="Live QR">
+                <img src="data:image/png;base64,{{ qr_img }}" alt="Custom Grid Pipeline">
                 {% else %}
-                <div style="color: #64748b; font-weight: 600; font-size: 14px;">QR Code Grid Output</div>
+                <div style="color: #5c3f85; font-weight: 600; font-size: 14px;">QR Matrix Grid</div>
                 {% endif %}
             </div>
+            
+            <button type="button" class="btn-download-trigger" onclick="triggerDownload()">Download</button>
         </div>
+
+        <!-- System Input Customization Right Config Panel Form -->
         <form class="window-right" method="POST" id="qrForm">
-            <div class="drawer-box">
-                <div class="drawer-header active-blue" onclick="toggleDrawer('frames-content')">
-                    <span>FRAMES <span style="font-size: 10px; margin-left: 5px; background: rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 4px;">NEW!</span></span>
-                    <span id="frames-content-arrow">▲</span>
-                </div>
-                <div id="frames-content" class="drawer-body">
-                    <input type="text" class="input-text-area" name="qr_data" placeholder="Enter text or URL..." value="{{ text_data }}" oninput="autoSubmitForm()" required>
-                    <div class="matrix-options-grid">
-                        <div class="frame-card-node selected">✕</div>
-                        <div class="frame-card-node">Standard</div>
-                        <div class="frame-card-node">Scan Me</div>
-                        <div class="frame-card-node">Watch Now</div>
-                    </div>
-                </div>
+            <div class="logo-branding-area">
+                <div class="logo-text-main">QRcode</div>
+                <div class="logo-text-sub">generator</div>
             </div>
-            <div class="drawer-box">
-                <div class="drawer-header plain-dark" onclick="toggleDrawer('shape-content')">
-                    <span>SHAPE & COLOR</span>
-                    <span id="shape-content-arrow">▼</span>
-                </div>
-                <div id="shape-content" class="drawer-body collapsed">
-                    <div style="color: #8a8a93; font-size: 13px;">Custom node shapes, colors, and designs.</div>
-                </div>
+
+            <div class="form-input-group">
+                <label class="field-label">Submit URL or text</label>
+                <input type="text" class="text-input-field" name="qr_data" placeholder="Enter text or URL here" value="{{ text_data }}" required>
             </div>
-            <div class="drawer-box">
-                <div class="drawer-header plain-dark" onclick="toggleDrawer('logo-content')">
-                    <span>LOGO</span>
-                    <span id="logo-content-arrow">▼</span>
-                </div>
-                <div id="logo-content" class="drawer-body collapsed">
-                    <div style="color: #8a8a93; font-size: 13px;">Embed custom logo images.</div>
-                </div>
+
+            <div class="form-input-group">
+                <label class="field-label">Image size</label>
+                <input type="text" class="text-input-field" style="text-align: center; color: #5c3f85;" value="300x300" readonly>
             </div>
-            <div class="action-container-row">
-                <button type="button" class="btn-action-trigger solid-green" onclick="triggerDownload()">DOWNLOAD JPG</button>
-                <button type="button" class="btn-action-trigger outline-cyan">VECTOR SVG/EPS</button>
-            </div>
+
+            <button type="submit" class="btn-generate-action">Generate</button>
+
+            
+            <a href="https://github.com/alirajput2074-stack" target="_blank" class="github-anchor-icon">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://w3.org"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
+            </a>
         </form>
     </div>
+
     <script>
-        function toggleDrawer(id) {
-            const el = document.getElementById(id);
-            const arrow = document.getElementById(id + '-arrow');
-            if (el.classList.contains('collapsed')) { el.classList.remove('collapsed'); arrow.innerText = '▲'; }
-            else { el.classList.add('collapsed'); arrow.innerText = '▼'; }
-        }
-        let typingTimer;
-        function autoSubmitForm() {
-            clearTimeout(typingTimer);
-            typingTimer = setTimeout(() => { document.getElementById('qrForm').submit(); }, 400); 
-        }
         function triggerDownload() {
             const qrImg = document.querySelector('.qr-stage-container img');
             if (qrImg) {
-                const link = document.createElement('a'); link.href = qrImg.src; link.download = 'custom_qrcode.png';
-                document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                const link = document.createElement('a');
+                link.href = qrImg.src;
+                link.download = 'qrcode_purple.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             }
         }
     </script>
@@ -120,11 +260,12 @@ def home():
         qr = qrcode.QRCode(version=1, box_size=10, border=1)
         qr.add_data(text_data)
         qr.make(fit=True)
-        img_qr = qr.make_image(fill_color="black", back_color="white")
+        img_qr = qr.make_image(fill_color="#1a0b2e", back_color="white")
         qr_buffer = io.BytesIO()
         img_qr.save(qr_buffer, format="PNG")
         qr_img_base64 = base64.b64encode(qr_buffer.getvalue()).decode('utf-8')
     return render_template_string(HTML_TEMPLATE, qr_img=qr_img_base64, text_data=text_data)
 
+# Run context definition framework hook for Vercel functions mapping node execution
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5003, debug=True)
