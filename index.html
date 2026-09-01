@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator - Premium Purple</title>
-    <!-- Live QR matrix library vector module compilation hook -->
-    <script src="https://cloudflare.com"></script>
     <style>
         body {
             background: radial-gradient(circle, #2d124d 0%, #0d041a 100%);
@@ -74,12 +72,14 @@
             align-items: center;
             margin-bottom: 25px;
             overflow: hidden;
+            padding: 20px;
+            box-sizing: border-box;
         }
-        /* Keep alignment vectors anchored centrally in canvas */
-        .qr-stage-container img, .qr-stage-container canvas {
+        .qr-stage-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
             display: block;
-            max-width: 250px;
-            max-height: 250px;
         }
         .btn-download-trigger {
             width: 100%;
@@ -188,8 +188,9 @@
                 </div>
             </div>
             
-            <!-- Live client rendered workspace grid -->
-            <div class="qr-stage-container" id="qrcode"></div>
+            <div class="qr-stage-container">
+                <img id="qrImageOutput" alt="QR Code Output Framework">
+            </div>
             
             <button type="button" class="btn-download-trigger" onclick="triggerDownload()">Download</button>
         </div>
@@ -219,41 +220,29 @@
     </div>
 
     <script>
-        let qrContainer = document.getElementById("qrcode");
-        let qrcodeInstance = null;
-
-        // Functional live initialization pipeline
         function generateQRCode() {
-            let dataString = document.getElementById("qrDataInput").value.trim();
-            if(!dataString) return;
-
-            // Clear old container blocks before instantiation
-            qrContainer.innerHTML = "";
+            const dataString = document.getElementById("qrDataInput").value.trim() || "https://roblox.com";
             
-            qrcodeInstance = new QRCode(qrContainer, {
-                text: dataString,
-                width: 250,
-                height: 250,
-                colorDark : "#1a0b2e",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
+            // Build the static configuration layout grid natively using google open charts pipeline
+            const apiEndpoint = `https://qrserver.com{encodeURIComponent(dataString)}&color=1a0b2e`;
+            
+            document.getElementById("qrImageOutput").src = apiEndpoint;
         }
 
         function triggerDownload() {
-            // Fetch internal image matrix from canvas tree element pipeline
-            const targetImg = qrContainer.querySelector('img');
-            if (targetImg && targetImg.src) {
+            const targetSrc = document.getElementById("qrImageOutput").src;
+            if (targetSrc) {
                 const downloadLink = document.createElement('a');
-                downloadLink.href = targetImg.src;
+                downloadLink.href = targetSrc;
                 downloadLink.download = 'premium_purple_qr.png';
+                downloadLink.target = '_blank';
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
             }
         }
 
-        // Automatic generation loop run when document loads initial conditions
+        // Initialize script environment configurations state
         generateQRCode();
     </script>
 </body>
